@@ -18,7 +18,7 @@ bool test_result(Particle *partikel_start, Particle *partikel,
     return acceptable_error;
   };
 
-  char *member;
+  const char *member;
   float expect;
   float found;
 
