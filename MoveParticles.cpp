@@ -56,7 +56,7 @@ template <typename T> struct vec3 {
 void MoveParticlesOpt(const int nr_Particles, Particle *const partikel,
                       const float dt) {
 
-  constexpr int strip_size = 16;
+  constexpr int strip_size = 8;
 
   // Schleife �ber alle Partikel
   for (int i = 0; i < nr_Particles; i++) {
