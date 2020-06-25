@@ -12,9 +12,9 @@ bool test_result(Particle *partikel_start, Particle *partikel,
                           float thresh) {
     float delta_expected = expected - start;
     float delta_optimized = optimized - start;
-    float results_delta = std::abs(delta_optimized - delta_expected);
+    float results_delta = std::fabs(delta_optimized - delta_expected);
     bool acceptable_error =
-        results_delta < std::max(thresh, std::abs(thresh * delta_expected));
+        results_delta < std::max(thresh, std::fabs(thresh * delta_expected));
     return acceptable_error;
   };
 
