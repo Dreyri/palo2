@@ -47,7 +47,9 @@ void MoveParticles(const int nr_Particles, Particle *const partikel,
   }
 }
 
-void MoveParticlesOpt(const int nr_Particles, Particle *const partikel,
+// 5c) Diese Funktion wurde angepasst um mit der Structure of Arrays
+// datenstruktur klarzukommen
+void MoveParticlesOpt(const int nr_Particles, ParticleSoA particles,
                       const float dt) {
 
   // Schleife �ber alle Partikel
@@ -59,7 +61,7 @@ void MoveParticlesOpt(const int nr_Particles, Particle *const partikel,
     // Schleife �ber die anderen Partikel die Kraft auf Partikel i aus�ben
     // 5a) Erfordere eine Vektorisierung und gebe an das unser partikel 32 byte
     // aligned ist
-#pragma omp simd simdlen(8) aligned(partikel : 32)
+#pragma omp simd simdlen(8)
     for (int j = 0; j < nr_Particles; j++) {
 
       // Abschw�chung als zus�tzlicher Abstand, um Singularit�t und
@@ -68,9 +70,9 @@ void MoveParticlesOpt(const int nr_Particles, Particle *const partikel,
 
       // Gravitationsgesetz
       // Berechne Abstand der Partikel i und j
-      const float dx = partikel[j].x - partikel[i].x;
-      const float dy = partikel[j].y - partikel[i].y;
-      const float dz = partikel[j].z - partikel[i].z;
+      const float dx = particles.x[j] - particles.x[i];
+      const float dy = particles.y[j] - particles.y[i];
+      const float dz = particles.z[j] - particles.z[i];
       const float drSquared = dx * dx + dy * dy + dz * dz + softening;
 
       // 3a) Strength reduction, sqrt is gunstiger zu berechnen als pow
@@ -88,15 +90,15 @@ void MoveParticlesOpt(const int nr_Particles, Particle *const partikel,
 
     // Berechne �nderung der Geschwindigkeit des Partikel i durch einwirkende
     // Kraft
-    partikel[i].vx += dt * Fx;
-    partikel[i].vy += dt * Fy;
-    partikel[i].vz += dt * Fz;
+    particles.vx[i] += dt * Fx;
+    particles.vy[i] += dt * Fy;
+    particles.vz[i] += dt * Fz;
   }
 
   // Bewege Partikel entsprechend der aktuellen Geschwindigkeit
   for (int i = 0; i < nr_Particles; i++) {
-    partikel[i].x += partikel[i].vx * dt;
-    partikel[i].y += partikel[i].vy * dt;
-    partikel[i].z += partikel[i].vz * dt;
+    particles.x[i] += particles.vx[i] * dt;
+    particles.y[i] += particles.vy[i] * dt;
+    particles.z[i] += particles.vz[i] * dt;
   }
 }

@@ -230,6 +230,12 @@ int main() {
          stdGFlops);
   printf("#####################################\n");
 
-  _mm_free(partikel);
+  _mm_free(partikel.vz);
+  _mm_free(partikel.vy);
+  _mm_free(partikel.vx);
+  _mm_free(partikel.z);
+  _mm_free(partikel.y);
+  _mm_free(partikel.x);
+
   _mm_free(partikel_start);
 }
