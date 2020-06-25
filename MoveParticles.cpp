@@ -2,6 +2,7 @@
 
 #include <cstring>
 
+// 5d) dies sind unsere Abstraktionen um dem assume_aligned und assume directive
 #if __has_builtin(__builtin_assume_aligned)
 #define ASSUME_ALIGNED(x, alignment)                                           \
   x = static_cast<decltype(x)>(__builtin_assume_aligned(x, alignment))
