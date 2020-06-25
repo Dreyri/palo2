@@ -72,16 +72,10 @@ void MoveParticlesOpt(const int nr_Particles, Particle *const partikel,
 
       // 3a) Strength reduction, sqrt is gunstiger zu berechnen als pow
       float drPower32 = std::sqrt(drSquared) * drSquared;
-      // const float drPower32 = pow(drSquared, 3.0 / 2.0);
       // 3a) einmaliges vorberechnen der inversen
       float invDrPower32 = 1.f / drPower32;
 
       // Addiere Kraftkomponenten zur Netto-Kraft
-      /*
-  Fx += dx / drPower32;
-  Fy += dy / drPower32;
-  Fz += dz / drPower32;
-      */
       // 3a) Hier wird die inverse jetzt benutzt um die kosten der Division zu
       // sparen
       Fx += dx * invDrPower32;
