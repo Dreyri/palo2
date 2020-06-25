@@ -1,5 +1,7 @@
 #include "main.h"
 
+#include <mm_malloc.h>
+
 /// 2a) Diese Funktion nimmt die startwerte, die ergebnisse der
 /// Referenzimplementation und unserer optimierten Ergebnisse.
 /// Es wird getested ob der Unterschied zwischen den Startzustand und unseren
@@ -117,8 +119,13 @@ int main() {
       3; // Anzahl der Messungen, die nicht in Mittelwert ber�cksichtigt werden
   constexpr float dt = 0.01f; // L�nge eines Zeitschrittes
 
-  Particle *partikel_start = new Particle[nrOfParticles];
-  Particle *partikel = new Particle[nrOfParticles];
+  // 5a) Alloziere die Particle mit korrektem alignment
+  Particle *partikel_start =
+      static_cast<Particle *>(_mm_malloc(sizeof(Particle) * nrOfParticles, 32));
+  Particle *partikel =
+      static_cast<Particle *>(_mm_malloc(sizeof(Particle) * nrOfParticles, 32));
+  // Particle *partikel_start = new Particle[nrOfParticles];
+  // Particle *partikel = new Particle[nrOfParticles];
   copyParticles(partikel_start, partikel, nrOfParticles);
 
   // Initiaslisierung der Partikel mit Zufallswerten
