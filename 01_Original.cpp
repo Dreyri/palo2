@@ -110,6 +110,30 @@ void copyParticles(Particle *const partikel_src, Particle *const partikel_dst,
   }
 }
 
+void copyParticles(const Particle *partikel_src, ParticleSoA partikel_dst,
+                   int nr_Particles) {
+  for (int i = 0; i != nr_Particles; ++i) {
+    partikel_dst.x[i] = partikel_src[i].x;
+    partikel_dst.y[i] = partikel_src[i].y;
+    partikel_dst.z[i] = partikel_src[i].z;
+    partikel_dst.vx[i] = partikel_src[i].vx;
+    partikel_dst.vy[i] = partikel_src[i].vy;
+    partikel_dst.vz[i] = partikel_src[i].vz;
+  }
+}
+
+void copyParticles(ParticleSoA partikel_src, Particle *partikel_dst,
+                   int nr_Particles) {
+  for (int i = 0; i != nr_Particles; ++i) {
+    partikel_dst[i].x = partikel_src.x[i];
+    partikel_dst[i].y = partikel_src.y[i];
+    partikel_dst[i].z = partikel_src.z[i];
+    partikel_dst[i].vx = partikel_src.vx[i];
+    partikel_dst[i].vy = partikel_src.vy[i];
+    partikel_dst[i].vz = partikel_src.vz[i];
+  }
+}
+
 int main() {
   // Problemgr��e und Anzahl und Gr��e der Zeitschritte definieren
   constexpr int nrOfParticles = 16384;
@@ -122,10 +146,15 @@ int main() {
   // 5a) Alloziere die Particle mit korrektem alignment
   Particle *partikel_start =
       static_cast<Particle *>(_mm_malloc(sizeof(Particle) * nrOfParticles, 32));
-  Particle *partikel =
-      static_cast<Particle *>(_mm_malloc(sizeof(Particle) * nrOfParticles, 32));
-  // Particle *partikel_start = new Particle[nrOfParticles];
-  // Particle *partikel = new Particle[nrOfParticles];
+  ParticleSoA partikel = {
+      .x = static_cast<float *>(_mm_malloc(sizeof(float) * nrOfParticles, 32)),
+      .y = static_cast<float *>(_mm_malloc(sizeof(float) * nrOfParticles, 32)),
+      .z = static_cast<float *>(_mm_malloc(sizeof(float) * nrOfParticles, 32)),
+      .vx = static_cast<float *>(_mm_malloc(sizeof(float) * nrOfParticles, 32)),
+      .vy = static_cast<float *>(_mm_malloc(sizeof(float) * nrOfParticles, 32)),
+      .vz = static_cast<float *>(_mm_malloc(sizeof(float) * nrOfParticles, 32)),
+  };
+
   copyParticles(partikel_start, partikel, nrOfParticles);
 
   // Initiaslisierung der Partikel mit Zufallswerten
