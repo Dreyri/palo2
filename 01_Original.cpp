@@ -183,10 +183,12 @@ int main() {
 
     if (run == 0) {
       Particle *reference_particles = new Particle[nrOfParticles];
+      Particle *opt_particles = new Particle[nrOfParticles];
       copyParticles(partikel_start, reference_particles, nrOfParticles);
       MoveParticles(nrOfParticles, reference_particles, dt);
+      copyParticles(partikel, opt_particles, nrOfParticles);
 
-      if (!test_result(partikel_start, reference_particles, partikel,
+      if (!test_result(partikel_start, reference_particles, opt_particles,
                        nrOfParticles, 0.001f)) {
         std::terminate();
       } else {
