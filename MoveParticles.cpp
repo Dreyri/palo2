@@ -2,6 +2,28 @@
 
 #include <cstring>
 
+#if __has_builtin(__builtin_assume_aligned)
+#define ASSUME_ALIGNED(x, alignment)                                           \
+  x = static_cast<decltype(x)>(__builtin_assume_aligned(x, alignment))
+#elif defined(__INTEL_COMPILER)
+#define ASSUME_ALIGNED(x, alignment) __assume_aligned(x, alignment)
+#else
+#define ASSUME_ALIGNED(x, alignment) (void)0
+#endif
+
+#if defined(__INTEL_COMPILER)
+#define ASSUME(x) __assume(x)
+#elif __has_builtin(__builtin_unreachable)
+#define ASSUME(x)                                                              \
+  do {                                                                         \
+    if (!(x)) {                                                                \
+      __builtin_unreachable();                                                 \
+    }                                                                          \
+  } while (0)
+#else
+#define ASSUME(x) (void)0
+#endif
+
 void MoveParticles(const int nr_Particles, Particle *const partikel,
                    const float dt) {
 
