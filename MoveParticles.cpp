@@ -73,6 +73,17 @@ void MoveParticles(const int nr_Particles, Particle *const partikel,
 // datenstruktur klarzukommen
 void MoveParticlesOpt(const int nr_Particles, ParticleSoA particles,
                       const float dt) {
+  // 5d) Hiermit geben wir an das die anzahl der partikel immer Teilbar durch 8
+  // ist. Somit garantieren wir das keine Peel loops noetig sind.
+  ASSUME(nr_Particles % 8 == 0);
+
+  // 5d) Hiermit geben wir an das unsere pointer alle 32 byte aligned sind
+  ASSUME_ALIGNED(particles.x, 32);
+  ASSUME_ALIGNED(particles.y, 32);
+  ASSUME_ALIGNED(particles.z, 32);
+  ASSUME_ALIGNED(particles.vx, 32);
+  ASSUME_ALIGNED(particles.vy, 32);
+  ASSUME_ALIGNED(particles.vz, 32);
 
   // Schleife �ber alle Partikel
   for (int i = 0; i < nr_Particles; i++) {
