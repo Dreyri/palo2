@@ -59,7 +59,7 @@ void MoveParticlesOpt(const int nr_Particles, Particle *const partikel,
 
       // Abschw�chung als zus�tzlicher Abstand, um Singularit�t und
       // Selbst-Interaktion zu vermeiden
-      const float softening = 1e-20;
+      constexpr float softening = 1e-20;
 
       // Gravitationsgesetz
       // Berechne Abstand der Partikel i und j
@@ -67,7 +67,10 @@ void MoveParticlesOpt(const int nr_Particles, Particle *const partikel,
       const float dy = partikel[j].y - partikel[i].y;
       const float dz = partikel[j].z - partikel[i].z;
       const float drSquared = dx * dx + dy * dy + dz * dz + softening;
-      const float drPower32 = pow(drSquared, 3.0 / 2.0);
+
+      // 3a) Strength reduction, sqrt is gunstiger zu berechnen als pow
+      float drPower32 = std::sqrt(drSquared) * drSquared;
+      // const float drPower32 = pow(drSquared, 3.0 / 2.0);
 
       // Addiere Kraftkomponenten zur Netto-Kraft
       Fx += dx / drPower32;
