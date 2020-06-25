@@ -1,0 +1,432 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Intel(R) C++ Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 19.1.1.217 Build 20200306
+
+Compiler options: -march=native -O3 -DNDEBUG -qopt-report=5 -qopt-report-phase=vec,loop,openmp,ipo -fp-model=fast -ipo -o ausarbeitung
+
+    Report from: Interprocedural optimizations [ipo]
+
+  WHOLE PROGRAM (SAFE) [EITHER METHOD]: true
+  WHOLE PROGRAM (SEEN) [TABLE METHOD]: false
+  WHOLE PROGRAM (READ) [OBJECT READER METHOD]: true
+
+INLINING OPTION VALUES:
+  -inline-factor: 100
+  -inline-min-size: 30
+  -inline-max-size: 230
+  -inline-max-total-size: 2000
+  -inline-max-per-routine: disabled
+  -inline-max-per-compile: disabled
+
+In the inlining report below:
+   "sz" refers to the "size" of the routine. The smaller a routine's size,
+      the more likely it is to be inlined.
+   "isz" refers to the "inlined size" of the routine. This is the amount
+      the calling routine will grow if the called routine is inlined into it.
+      The compiler generally limits the amount a routine can grow by having
+      routines inlined into it.
+
+Begin optimization report for: main()
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (main()) [1/10=10.0%] ../01_Original.cpp(111,12)
+  -> EXTERN: (120,28) operator new[](std::size_t)
+  -> EXTERN: (121,22) operator new[](std::size_t)
+  -> INLINE: (122,3) copyParticles(Particle *, Particle *, int) (isz = 48) (sz = 57)
+  -> (125,3) initParticles(Particle *, int) (isz = 57) (sz = 64)
+     [[ Callee not marked with inlining pragma  <1>]]
+  -> EXTERN: (128,30) ?1memset
+  -> EXTERN: (129,29) ?1memset
+  -> EXTERN: (138,3) printf(const char *, ...)
+  -> INLINE: (141,5) copyParticles(Particle *, Particle *, int) (isz = 48) (sz = 57)
+  -> EXTERN: (143,27) omp_get_wtime()
+  -> INLINE: (144,5) MoveParticlesOpt(int, Particle *, float) (isz = 174) (sz = 183)
+    -> INLINE (MANUAL): ../MoveParticles.cpp:(95,27) std::sqrt(float) (isz = 0) (sz = 7)
+  -> EXTERN: (146,25) omp_get_wtime()
+  -> EXTERN: (149,37) operator new[](std::size_t)
+  -> INLINE: (150,7) copyParticles(Particle *, Particle *, int) (isz = 48) (sz = 57)
+  -> INLINE: (151,7) MoveParticles(int, Particle *, float) (isz = 139) (sz = 148)
+    -> EXTERN: ../MoveParticles.cpp:(27,31) pow(double, double) throw()
+  -> (153,12) test_result(Particle *, Particle *, Particle *, int, float) noexcept (isz = 329) (sz = 345)
+     [[ Inlining would exceed -inline-max-size value (345>230) <2>]]
+  -> EXTERN: (155,9) std::terminate() noexcept
+  -> EXTERN: (157,9) printf(const char *, ...)
+  -> EXTERN: (168,5) printf(const char *, ...)
+  -> EXTERN: (171,5) fflush(FILE *)
+  -> EXTERN: (189,3) printf(const char *, ...)
+  -> EXTERN: (190,3) printf(const char *, ...)
+  -> EXTERN: (191,3) printf(const char *, ...)
+  -> EXTERN: (193,3) printf(const char *, ...)
+  -> EXTERN: (195,3) operator delete[](void *) noexcept
+
+
+    Report from: Loop nest & Vector optimizations [loop, vec]
+
+
+LOOP BEGIN at ../01_Original.cpp(101,3) inlined into ../01_Original.cpp(122,3)
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->x[i]>, stride is 6   [ ../01_Original.cpp(102,5) ]
+   remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->x[i]>, stride is 6   [ ../01_Original.cpp(102,25) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->y[i]>, stride is 6   [ ../01_Original.cpp(103,5) ]
+   remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->y[i]>, stride is 6   [ ../01_Original.cpp(103,25) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->z[i]>, stride is 6   [ ../01_Original.cpp(104,5) ]
+   remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->z[i]>, stride is 6   [ ../01_Original.cpp(104,25) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->vx[i]>, stride is 6   [ ../01_Original.cpp(105,5) ]
+   remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->vx[i]>, stride is 6   [ ../01_Original.cpp(105,26) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->vy[i]>, stride is 6   [ ../01_Original.cpp(106,5) ]
+   remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->vy[i]>, stride is 6   [ ../01_Original.cpp(106,26) ]
+   remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->vz[i]>, stride is 6   [ ../01_Original.cpp(107,5) ]
+   remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->vz[i]>, stride is 6   [ ../01_Original.cpp(107,26) ]
+   remark #15305: vectorization support: vector length 2
+   remark #15452: unmasked strided loads: 6 
+   remark #15453: unmasked strided stores: 6 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 27 
+   remark #15477: vector cost: 37.000 
+   remark #15478: estimated potential speedup: 0.720 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at ../01_Original.cpp(140,16)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at ../01_Original.cpp(101,3) inlined into ../01_Original.cpp(141,5)
+      remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->x[i]>, stride is 6   [ ../01_Original.cpp(102,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->x[i]>, stride is 6   [ ../01_Original.cpp(102,25) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->y[i]>, stride is 6   [ ../01_Original.cpp(103,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->y[i]>, stride is 6   [ ../01_Original.cpp(103,25) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->z[i]>, stride is 6   [ ../01_Original.cpp(104,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->z[i]>, stride is 6   [ ../01_Original.cpp(104,25) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->vx[i]>, stride is 6   [ ../01_Original.cpp(105,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->vx[i]>, stride is 6   [ ../01_Original.cpp(105,26) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->vy[i]>, stride is 6   [ ../01_Original.cpp(106,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->vy[i]>, stride is 6   [ ../01_Original.cpp(106,26) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->vz[i]>, stride is 6   [ ../01_Original.cpp(107,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->vz[i]>, stride is 6   [ ../01_Original.cpp(107,26) ]
+      remark #15305: vectorization support: vector length 2
+      remark #15452: unmasked strided loads: 6 
+      remark #15453: unmasked strided stores: 6 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 27 
+      remark #15477: vector cost: 37.000 
+      remark #15478: estimated potential speedup: 0.720 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at ../MoveParticles.cpp(62,3) inlined into ../01_Original.cpp(144,5)
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at ../MoveParticles.cpp(68,5) inlined into ../01_Original.cpp(144,5)
+         remark #15542: loop was not vectorized: inner loop was already vectorized
+
+         LOOP BEGIN at ../MoveParticles.cpp(72,7) inlined into ../01_Original.cpp(144,5)
+            remark #25045: Fused Loops: ( 72 87 )
+
+            remark #25427: Loop Statements Reordered
+            remark #15329: vectorization support: non-unit strided store was emulated for the variable <results.z[strip_index]>, stride is 3   [ ../MoveParticles.cpp(82,9) ]
+            remark #15415: vectorization support: non-unit strided load was generated for the variable <partikel->z[j]>, stride is 6   [ ../MoveParticles.cpp(82,34) ]
+            remark #15329: vectorization support: non-unit strided store was emulated for the variable <results.y[strip_index]>, stride is 3   [ ../MoveParticles.cpp(81,9) ]
+            remark #15415: vectorization support: non-unit strided load was generated for the variable <partikel->y[j]>, stride is 6   [ ../MoveParticles.cpp(81,34) ]
+            remark #15329: vectorization support: non-unit strided store was emulated for the variable <results.x[strip_index]>, stride is 3   [ ../MoveParticles.cpp(80,9) ]
+            remark #15415: vectorization support: non-unit strided load was generated for the variable <partikel->x[j]>, stride is 6   [ ../MoveParticles.cpp(80,34) ]
+            remark #15415: vectorization support: non-unit strided load was generated for the variable <results.x[k]>, stride is 3   [ ../MoveParticles.cpp(93,19) ]
+            remark #15415: vectorization support: non-unit strided load was generated for the variable <results.y[k]>, stride is 3   [ ../MoveParticles.cpp(93,19) ]
+            remark #15415: vectorization support: non-unit strided load was generated for the variable <results.z[k]>, stride is 3   [ ../MoveParticles.cpp(93,19) ]
+            remark #15305: vectorization support: vector length 8
+            remark #15427: loop was completely unrolled
+            remark #15309: vectorization support: normalized vectorization overhead 0.066
+            remark #15355: vectorization support: Fx is float type reduction   [ ../MoveParticles.cpp(65,14) ]
+            remark #15355: vectorization support: Fy is float type reduction   [ ../MoveParticles.cpp(65,22) ]
+            remark #15355: vectorization support: Fz is float type reduction   [ ../MoveParticles.cpp(65,30) ]
+            remark #15301: FUSED LOOP WAS VECTORIZED
+            remark #15452: unmasked strided loads: 6 
+            remark #15453: unmasked strided stores: 3 
+            remark #15475: --- begin vector cost summary ---
+            remark #15476: scalar cost: 107 
+            remark #15477: vector cost: 35.750 
+            remark #15478: estimated potential speedup: 2.800 
+            remark #15488: --- end vector cost summary ---
+         LOOP END
+
+         LOOP BEGIN at ../MoveParticles.cpp(87,7) inlined into ../01_Original.cpp(144,5)
+            remark #25046: Loop lost in Fusion 
+         LOOP END
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at ../MoveParticles.cpp(116,3) inlined into ../01_Original.cpp(144,5)
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->x[i]>, stride is 6   [ ../MoveParticles.cpp(117,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel->x[i]>, stride is 6   [ ../MoveParticles.cpp(117,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel->vx[i]>, stride is 6   [ ../MoveParticles.cpp(117,22) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->y[i]>, stride is 6   [ ../MoveParticles.cpp(118,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel->y[i]>, stride is 6   [ ../MoveParticles.cpp(118,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel->vy[i]>, stride is 6   [ ../MoveParticles.cpp(118,22) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <partikel->z[i]>, stride is 6   [ ../MoveParticles.cpp(119,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel->z[i]>, stride is 6   [ ../MoveParticles.cpp(119,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel->vz[i]>, stride is 6   [ ../MoveParticles.cpp(119,22) ]
+      remark #15305: vectorization support: vector length 2
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15452: unmasked strided loads: 6 
+      remark #15453: unmasked strided stores: 3 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 29 
+      remark #15477: vector cost: 21.000 
+      remark #15478: estimated potential speedup: 1.380 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=4096
+   LOOP END
+
+   LOOP BEGIN at ../01_Original.cpp(101,3) inlined into ../01_Original.cpp(150,7)
+      remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <reference_particles->x[i]>, stride is 6   [ ../01_Original.cpp(102,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->x[i]>, stride is 6   [ ../01_Original.cpp(102,25) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <reference_particles->y[i]>, stride is 6   [ ../01_Original.cpp(103,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->y[i]>, stride is 6   [ ../01_Original.cpp(103,25) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <reference_particles->z[i]>, stride is 6   [ ../01_Original.cpp(104,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->z[i]>, stride is 6   [ ../01_Original.cpp(104,25) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <reference_particles->vx[i]>, stride is 6   [ ../01_Original.cpp(105,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->vx[i]>, stride is 6   [ ../01_Original.cpp(105,26) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <reference_particles->vy[i]>, stride is 6   [ ../01_Original.cpp(106,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->vy[i]>, stride is 6   [ ../01_Original.cpp(106,26) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <reference_particles->vz[i]>, stride is 6   [ ../01_Original.cpp(107,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <partikel_start->vz[i]>, stride is 6   [ ../01_Original.cpp(107,26) ]
+      remark #15305: vectorization support: vector length 2
+      remark #15452: unmasked strided loads: 6 
+      remark #15453: unmasked strided stores: 6 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 27 
+      remark #15477: vector cost: 37.000 
+      remark #15478: estimated potential speedup: 0.720 
+      remark #15488: --- end vector cost summary ---
+   LOOP END
+
+   LOOP BEGIN at ../MoveParticles.cpp(9,3) inlined into ../01_Original.cpp(151,7)
+      remark #25096: Loop Interchange not done due to: Imperfect Loop Nest (Either at Source or due to other Compiler Transformations)
+      remark #25451: Advice: Loop Interchange, if possible, might help loopnest. Suggested Permutation : ( 1 2 ) --> ( 2 1 ) 
+      remark #25461: Imperfect Loop Unroll-Jammed by 2   (pre-vector) 
+      remark #15542: loop was not vectorized: inner loop was already vectorized
+
+      LOOP BEGIN at ../MoveParticles.cpp(15,5) inlined into ../01_Original.cpp(151,7)
+         remark #15415: vectorization support: non-unit strided load was generated for the variable <reference_particles->x[j]>, stride is 6   [ ../MoveParticles.cpp(23,24) ]
+         remark #15415: vectorization support: non-unit strided load was generated for the variable <reference_particles->y[j]>, stride is 6   [ ../MoveParticles.cpp(24,24) ]
+         remark #15415: vectorization support: non-unit strided load was generated for the variable <reference_particles->z[j]>, stride is 6   [ ../MoveParticles.cpp(25,24) ]
+         remark #15415: vectorization support: non-unit strided load was generated for the variable <reference_particles->x[j]>, stride is 6   [ ../MoveParticles.cpp(23,24) ]
+         remark #15415: vectorization support: non-unit strided load was generated for the variable <reference_particles->y[j]>, stride is 6   [ ../MoveParticles.cpp(24,24) ]
+         remark #15415: vectorization support: non-unit strided load was generated for the variable <reference_particles->z[j]>, stride is 6   [ ../MoveParticles.cpp(25,24) ]
+         remark #15305: vectorization support: vector length 8
+         remark #15309: vectorization support: normalized vectorization overhead 0.389
+         remark #15355: vectorization support: Fx is float type reduction   [ ../MoveParticles.cpp(12,14) ]
+         remark #15355: vectorization support: Fy is float type reduction   [ ../MoveParticles.cpp(12,22) ]
+         remark #15355: vectorization support: Fz is float type reduction   [ ../MoveParticles.cpp(12,30) ]
+         remark #15355: vectorization support: Fx is float type reduction   [ ../MoveParticles.cpp(12,14) ]
+         remark #15355: vectorization support: Fy is float type reduction   [ ../MoveParticles.cpp(12,22) ]
+         remark #15355: vectorization support: Fz is float type reduction   [ ../MoveParticles.cpp(12,30) ]
+         remark #15300: LOOP WAS VECTORIZED
+         remark #15452: unmasked strided loads: 6 
+         remark #15475: --- begin vector cost summary ---
+         remark #15476: scalar cost: 347 
+         remark #15477: vector cost: 61.750 
+         remark #15478: estimated potential speedup: 5.610 
+         remark #15486: divides: 6 
+         remark #15488: --- end vector cost summary ---
+         remark #25015: Estimate of max trip count of loop=2048
+      LOOP END
+   LOOP END
+
+   LOOP BEGIN at ../MoveParticles.cpp(43,3) inlined into ../01_Original.cpp(151,7)
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <reference_particles->x[i]>, stride is 6   [ ../MoveParticles.cpp(44,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <reference_particles->x[i]>, stride is 6   [ ../MoveParticles.cpp(44,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <reference_particles->vx[i]>, stride is 6   [ ../MoveParticles.cpp(44,22) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <reference_particles->y[i]>, stride is 6   [ ../MoveParticles.cpp(45,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <reference_particles->y[i]>, stride is 6   [ ../MoveParticles.cpp(45,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <reference_particles->vy[i]>, stride is 6   [ ../MoveParticles.cpp(45,22) ]
+      remark #15329: vectorization support: non-unit strided store was emulated for the variable <reference_particles->z[i]>, stride is 6   [ ../MoveParticles.cpp(46,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <reference_particles->z[i]>, stride is 6   [ ../MoveParticles.cpp(46,5) ]
+      remark #15328: vectorization support: non-unit strided load was emulated for the variable <reference_particles->vz[i]>, stride is 6   [ ../MoveParticles.cpp(46,22) ]
+      remark #15305: vectorization support: vector length 2
+      remark #15399: vectorization support: unroll factor set to 2
+      remark #15300: LOOP WAS VECTORIZED
+      remark #15452: unmasked strided loads: 6 
+      remark #15453: unmasked strided stores: 3 
+      remark #15475: --- begin vector cost summary ---
+      remark #15476: scalar cost: 29 
+      remark #15477: vector cost: 21.000 
+      remark #15478: estimated potential speedup: 1.380 
+      remark #15488: --- end vector cost summary ---
+      remark #25015: Estimate of max trip count of loop=4096
+   LOOP END
+LOOP END
+
+LOOP BEGIN at ../01_Original.cpp(179,3)
+   remark #15389: vectorization support: reference runtimeStep[i] has unaligned access   [ ../01_Original.cpp(181,10) ]
+   remark #15389: vectorization support: reference runtimeStep[i] has unaligned access   [ ../01_Original.cpp(181,43) ]
+   remark #15389: vectorization support: reference GFlopsStep[i] has unaligned access   [ ../01_Original.cpp(182,19) ]
+   remark #15389: vectorization support: reference GFlopsStep[i] has unaligned access   [ ../01_Original.cpp(182,50) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15335: loop was not vectorized: vectorization possible but seems inefficient. Use vector always directive or -vec-threshold0 to override 
+   remark #15305: vectorization support: vector length 2
+   remark #15309: vectorization support: normalized vectorization overhead 1.200
+   remark #15355: vectorization support: stdRuntime is double type reduction   [ ../01_Original.cpp(131,21) ]
+   remark #15355: vectorization support: stdGFlops is double type reduction   [ ../01_Original.cpp(133,20) ]
+   remark #15450: unmasked unaligned unit stride loads: 3 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 23 
+   remark #15477: vector cost: 12.500 
+   remark #15478: estimated potential speedup: 1.250 
+   remark #15488: --- end vector cost summary ---
+   remark #25436: completely unrolled by 7  
+LOOP END
+===========================================================================
+
+Begin optimization report for: test_result(Particle *, Particle *, Particle *, int, float) noexcept
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (test_result(Particle *, Particle *, Particle *, int, float) noexcept) [2/10=20.0%] ../01_Original.cpp(9,56)
+  -> EXTERN: (9,56) __cxa_call_unexpected
+  -> INLINE (MANUAL): (28,23) lambda [] type at line 75461, col. 24::operator()(const struct lambda [] type at line 75461, col. 24 *, float, float, float, float)->bool (isz = 19) (sz = 34)
+    -> INLINE (MANUAL): (15,27) std::abs(float) (isz = 0) (sz = 7)
+    -> DELETED: (17,25) std::max<float>(const float &, const float &) (isz = 2) (sz = 12)
+    -> INLINE (MANUAL): (17,42) std::abs(float) (isz = 0) (sz = 7)
+  -> INLINE (MANUAL): (37,23) lambda [] type at line 75461, col. 24::operator()(const struct lambda [] type at line 75461, col. 24 *, float, float, float, float)->bool (isz = 19) (sz = 34)
+    -> INLINE (MANUAL): (15,27) std::abs(float) (isz = 0) (sz = 7)
+    -> DELETED: (17,25) std::max<float>(const float &, const float &) (isz = 2) (sz = 12)
+    -> INLINE (MANUAL): (17,42) std::abs(float) (isz = 0) (sz = 7)
+  -> INLINE (MANUAL): (45,23) lambda [] type at line 75461, col. 24::operator()(const struct lambda [] type at line 75461, col. 24 *, float, float, float, float)->bool (isz = 19) (sz = 34)
+    -> INLINE (MANUAL): (15,27) std::abs(float) (isz = 0) (sz = 7)
+    -> DELETED: (17,25) std::max<float>(const float &, const float &) (isz = 2) (sz = 12)
+    -> INLINE (MANUAL): (17,42) std::abs(float) (isz = 0) (sz = 7)
+  -> INLINE (MANUAL): (53,23) lambda [] type at line 75461, col. 24::operator()(const struct lambda [] type at line 75461, col. 24 *, float, float, float, float)->bool (isz = 19) (sz = 34)
+    -> INLINE (MANUAL): (15,27) std::abs(float) (isz = 0) (sz = 7)
+    -> DELETED: (17,25) std::max<float>(const float &, const float &) (isz = 2) (sz = 12)
+    -> INLINE (MANUAL): (17,42) std::abs(float) (isz = 0) (sz = 7)
+  -> INLINE (MANUAL): (61,23) lambda [] type at line 75461, col. 24::operator()(const struct lambda [] type at line 75461, col. 24 *, float, float, float, float)->bool (isz = 19) (sz = 34)
+    -> INLINE (MANUAL): (15,27) std::abs(float) (isz = 0) (sz = 7)
+    -> DELETED: (17,25) std::max<float>(const float &, const float &) (isz = 2) (sz = 12)
+    -> INLINE (MANUAL): (17,42) std::abs(float) (isz = 0) (sz = 7)
+  -> INLINE (MANUAL): (69,23) lambda [] type at line 75461, col. 24::operator()(const struct lambda [] type at line 75461, col. 24 *, float, float, float, float)->bool (isz = 19) (sz = 34)
+    -> INLINE (MANUAL): (15,27) std::abs(float) (isz = 0) (sz = 7)
+    -> DELETED: (17,25) std::max<float>(const float &, const float &) (isz = 2) (sz = 12)
+    -> INLINE (MANUAL): (17,42) std::abs(float) (isz = 0) (sz = 7)
+  -> EXTERN: (82,3) printf(const char *, ...)
+  -> EXTERN: (83,3) printf(const char *, ...)
+
+
+    Report from: Loop nest & Vector optimizations [loop, vec]
+
+
+
+Non-optimizable loops:
+
+
+LOOP BEGIN at ../01_Original.cpp(27,3)
+   remark #15522: loop was not vectorized: loop control flow is too complex. Try using canonical loop form from OpenMP specification
+LOOP END
+===========================================================================
+
+Begin optimization report for: std::max<float>(const float &, const float &)
+
+    Report from: Interprocedural optimizations [ipo]
+
+DEAD STATIC FUNCTION: (std::max<float>(const float &, const float &)) /usr/include/c++/10.1.0/bits/stl_algobase.h(255,5)
+
+===========================================================================
+
+Begin optimization report for: std::abs(float)
+
+    Report from: Interprocedural optimizations [ipo]
+
+DEAD STATIC FUNCTION: (std::abs(float)) /usr/include/c++/10.1.0/bits/std_abs.h(76,3)
+
+===========================================================================
+
+Begin optimization report for: std::sqrt(float)
+
+    Report from: Interprocedural optimizations [ipo]
+
+DEAD STATIC FUNCTION: (std::sqrt(float)) /usr/include/c++/10.1.0/cmath(464,3)
+
+===========================================================================
+
+Begin optimization report for: lambda [] type at line 75461, col. 24::operator()(const struct lambda [] type at line 75461, col. 24 *, float, float, float, float)->bool
+
+    Report from: Interprocedural optimizations [ipo]
+
+DEAD STATIC FUNCTION: (lambda [] type at line 75461, col. 24::operator()(const struct lambda [] type at line 75461, col. 24 *, float, float, float, float)->bool) ../01_Original.cpp(12,41)
+
+===========================================================================
+
+Begin optimization report for: MoveParticles(int, Particle *, float)
+
+    Report from: Interprocedural optimizations [ipo]
+
+DEAD STATIC FUNCTION: (MoveParticles(int, Particle *, float)) ../MoveParticles.cpp(6,36)
+
+===========================================================================
+
+Begin optimization report for: MoveParticlesOpt(int, Particle *, float)
+
+    Report from: Interprocedural optimizations [ipo]
+
+DEAD STATIC FUNCTION: (MoveParticlesOpt(int, Particle *, float)) ../MoveParticles.cpp(57,39)
+
+===========================================================================
+
+Begin optimization report for: copyParticles(Particle *, Particle *, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+DEAD STATIC FUNCTION: (copyParticles(Particle *, Particle *, int)) ../01_Original.cpp(100,44)
+
+===========================================================================
+
+Begin optimization report for: initParticles(Particle *, int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (initParticles(Particle *, int)) [10/10=100.0%] ../01_Original.cpp(87,70)
+  -> EXTERN: (88,3) srand(unsigned int) throw()
+  -> EXTERN: (90,27) rand() throw()
+  -> EXTERN: (91,27) rand() throw()
+  -> EXTERN: (92,27) rand() throw()
+  -> EXTERN: (93,28) rand() throw()
+  -> EXTERN: (94,28) rand() throw()
+  -> EXTERN: (95,28) rand() throw()
+
+
+    Report from: Loop nest & Vector optimizations [loop, vec]
+
+
+LOOP BEGIN at ../01_Original.cpp(89,3)
+   remark #15382: vectorization support: call to function rand() throw() cannot be vectorized   [ ../01_Original.cpp(90,27) ]
+   remark #15382: vectorization support: call to function rand() throw() cannot be vectorized   [ ../01_Original.cpp(91,27) ]
+   remark #15382: vectorization support: call to function rand() throw() cannot be vectorized   [ ../01_Original.cpp(92,27) ]
+   remark #15382: vectorization support: call to function rand() throw() cannot be vectorized   [ ../01_Original.cpp(93,28) ]
+   remark #15382: vectorization support: call to function rand() throw() cannot be vectorized   [ ../01_Original.cpp(94,28) ]
+   remark #15382: vectorization support: call to function rand() throw() cannot be vectorized   [ ../01_Original.cpp(95,28) ]
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:rand() throw() (90:27) and call:rand() throw() (95:28)
+   remark #15346: vector dependence: assumed OUTPUT dependence between call:rand() throw() (95:28) and call:rand() throw() (90:27)
+LOOP END
+===========================================================================
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINING FOOTNOTES:
+
+<1> The compiler's heuristics indicate that the function is not profitable to 
+    inline.  Override this decision by adding "inline 
+    __attribute__((always_inline))" to the declaration of the called function, 
+    or add "#pragma forceinline" before the call site.
+
+<2> The function is larger than the inliner would normally inline.  Use the
+    option -inline-max-size to increase the size of any function that would
+    normally be inlined, add "inline __attribute__((always_inline))" to the
+    declaration of the called function, or add "#pragma forceinline" before
+    the call site.
+
