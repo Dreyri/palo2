@@ -199,5 +199,6 @@ int main() {
          stdGFlops);
   printf("#####################################\n");
 
-  delete[] partikel;
+  _mm_free(partikel);
+  _mm_free(partikel_start);
 }
