@@ -47,17 +47,16 @@ void MoveParticles(const int nr_Particles, Particle *const partikel,
   }
 }
 
-struct vector_results {
-  float dx;
-  float dy;
-  float dz;
-  float invDrPower32;
+template <typename T> struct vec3 {
+  T x;
+  T y;
+  T z;
 };
 
 void MoveParticlesOpt(const int nr_Particles, Particle *const partikel,
                       const float dt) {
 
-  constexpr int strip_size = 8;
+  constexpr int strip_size = 16;
 
   // Schleife �ber alle Partikel
   for (int i = 0; i < nr_Particles; i++) {
@@ -67,48 +66,42 @@ void MoveParticlesOpt(const int nr_Particles, Particle *const partikel,
 
     // Schleife �ber die anderen Partikel die Kraft auf Partikel i aus�ben
     for (int jj = 0; jj < nr_Particles; jj += strip_size) {
-      vector_results results[strip_size];
+      vec3<float> results[strip_size];
 
       // 4a) Dieser Teil enthaelt den vektorisierbaren Teil
-      for (int strip_index = 0; strip_index != strip_size; ++strip_index) {
-        // 4a) Berechnung des wirklichen j Wert weil unser jetziges j um
-        // strip_size springt
-        int j = jj + strip_index;
-
-        // Abschw�chung als zus�tzlicher Abstand, um Singularit�t und
-        // Selbst-Interaktion zu vermeiden
-        constexpr float softening = 1e-20;
+      for (int strip_index = 0, j = jj; strip_index != strip_size;
+           ++strip_index, ++j) {
 
         // Gravitationsgesetz
         // Berechne Abstand der Partikel i und j
-        float dx_ = partikel[j].x - partikel[i].x;
-        float dy_ = partikel[j].y - partikel[i].y;
-        float dz_ = partikel[j].z - partikel[i].z;
-        const float drSquared = dx_ * dx_ + dy_ * dy_ + dz_ * dz_ + softening;
-
-        // 3a) Strength reduction, sqrt is gunstiger zu berechnen als pow
-        float drPower32 = std::sqrt(drSquared) * drSquared;
-        // 3a) einmaliges vorberechnen der inversen
-        float invDrPower32_ = 1.f / drPower32;
-
-        results[strip_index].dx = dx_;
-        results[strip_index].dy = dy_;
-        results[strip_index].dz = dz_;
-        results[strip_index].invDrPower32 = invDrPower32_;
+        // 4a) Dieser teil wird nicht vektorisiert im precise fp-modell
+        // auch nachdem nur noch diese sehr deutlich vektorisierbare operation
+        // vorhanden ist
+        results[strip_index].x = partikel[j].x - partikel[i].x;
+        results[strip_index].y = partikel[j].y - partikel[i].y;
+        results[strip_index].z = partikel[j].z - partikel[i].z;
       }
 
       // 4a) dieser Teil ist der nicht vektorisierbare Teil wegen der
       // Datenabhaengigkeit von F{x,y,z}
       for (int k = 0; k != strip_size; ++k) {
+
+        // Abschw�chung als zus�tzlicher Abstand, um Singularit�t und
+        // Selbst-Interaktion zu vermeiden
+        constexpr float softening = 1e-20;
+
+        auto &r = results[k];
+        float drSquared = r.x * r.x + r.y * r.y + r.z * r.z + softening;
+        float drPower32 = std::sqrt(drSquared) * drSquared;
+
+        float invDrPower32 = 1.f / drPower32;
+
         // Addiere Kraftkomponenten zur Netto-Kraft
         // 3a) Hier wird die inverse jetzt benutzt um die kosten der Division zu
         // sparen
-        auto &r = results[k];
-        float invDrPower32_ = r.invDrPower32;
-
-        Fx += r.dx * invDrPower32_;
-        Fy += r.dy * invDrPower32_;
-        Fz += r.dz * invDrPower32_;
+        Fx += r.x * invDrPower32;
+        Fy += r.y * invDrPower32;
+        Fz += r.z * invDrPower32;
       }
     }
 
