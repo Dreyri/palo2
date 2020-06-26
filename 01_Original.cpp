@@ -177,8 +177,9 @@ int main() {
     copyParticles(partikel_start, partikel, nrOfParticles);
 
     const double tStart = omp_get_wtime(); // Start der Zeitmessung
-    MoveParticlesOpt(nrOfParticles, partikel,
-                     dt);                // Funktion, die optimiert werden soll
+    MoveParticlesOptLoopBlock(nrOfParticles, partikel,
+                              dt); // Funktion, die optimiert werden soll
+    // MoveParticlesOptRegBlock(nrOfParticles, partikel, dt);
     const double tEnd = omp_get_wtime(); // Ende der Zeitmessung
 
     if (run == 0) {
