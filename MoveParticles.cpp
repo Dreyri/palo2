@@ -161,55 +161,56 @@ void MoveParticlesOptLoopBlock(const int nr_Particles, ParticleSoA particles,
   ASSUME_ALIGNED(particles.vy, 32);
   ASSUME_ALIGNED(particles.vz, 32);
 
+  // 7c) groesse des tiles
+  constexpr int tile_size = 1024;
+
 // Schleife �ber alle Partikel
-// 6c) mit parallel for wird diese Schleife jetzt parallelisiert und wir geben
-// einen static schedule mit Blockgroesse 512 an.
-#pragma omp parallel for schedule(static, 512)
-  for (int i = 0; i < nr_Particles; i++) {
+#pragma omp parallel for
+  for (int jj = 0; jj < nr_Particles; jj += tile_size) {
 
     // Kraftkomponenten (x,y,z) der Kraft auf aktuellen Partikel (i)
-    float Fx = 0, Fy = 0, Fz = 0;
-
+    // 7c) erstelle arrays in der groesse unserer tile size fuer Fx, Fy und Fz
+    float Fx[tile_size] = {};
+    float Fy[tile_size] = {};
+    float Fz[tile_size] = {};
     // Schleife �ber die anderen Partikel die Kraft auf Partikel i aus�ben
-    // 5a) Erfordere eine Vektorisierung und gebe an das unser partikel 32 byte
-    // aligned ist
-    // 6a) Benutze parallel for um diese Schleife zu parallelisieren, gebe an
-    // das wir eine Reduktion ueber den Werten Fx, Fy, und Fz machen um
-    // Datenrennen zu vermeiden
-    // 6c) Nur noch die omp simd Anweisung da parallelisierung in der aeusseren
-    // Schleife gemacht wird
 #pragma omp simd simdlen(8)
-    for (int j = 0; j < nr_Particles; j++) {
+    for (int i = 0; i < nr_Particles; i++) {
+      for (int j = jj; j != (jj + tile_size); j++) {
 
-      // Abschw�chung als zus�tzlicher Abstand, um Singularit�t und
-      // Selbst-Interaktion zu vermeiden
-      constexpr float softening = 1e-20;
+        // Abschw�chung als zus�tzlicher Abstand, um Singularit�t und
+        // Selbst-Interaktion zu vermeiden
+        constexpr float softening = 1e-20;
 
-      // Gravitationsgesetz
-      // Berechne Abstand der Partikel i und j
-      const float dx = particles.x[j] - particles.x[i];
-      const float dy = particles.y[j] - particles.y[i];
-      const float dz = particles.z[j] - particles.z[i];
-      const float drSquared = dx * dx + dy * dy + dz * dz + softening;
+        // Gravitationsgesetz
+        // Berechne Abstand der Partikel i und j
+        const float dx = particles.x[j] - particles.x[i];
+        const float dy = particles.y[j] - particles.y[i];
+        const float dz = particles.z[j] - particles.z[i];
+        const float drSquared = dx * dx + dy * dy + dz * dz + softening;
 
-      // 3a) Strength reduction, sqrt is gunstiger zu berechnen als pow
-      float drPower32 = std::sqrt(drSquared) * drSquared;
-      // 3a) einmaliges vorberechnen der inversen
-      float invDrPower32 = 1.f / drPower32;
+        // 3a) Strength reduction, sqrt is gunstiger zu berechnen als pow
+        float drPower32 = std::sqrt(drSquared) * drSquared;
+        // 3a) einmaliges vorberechnen der inversen
+        float invDrPower32 = 1.f / drPower32;
 
-      // Addiere Kraftkomponenten zur Netto-Kraft
-      // 3a) Hier wird die inverse jetzt benutzt um die kosten der Division zu
-      // sparen
-      Fx += dx * invDrPower32;
-      Fy += dy * invDrPower32;
-      Fz += dz * invDrPower32;
+        // Addiere Kraftkomponenten zur Netto-Kraft
+        // 3a) Hier wird die inverse jetzt benutzt um die kosten der Division zu
+        // sparen
+        Fx[j - jj] += dx * invDrPower32;
+        Fy[j - jj] += dy * invDrPower32;
+        Fz[j - jj] += dz * invDrPower32;
+      }
+
+      // Berechne �nderung der Geschwindigkeit des Partikel i durch einwirkende
+      // Kraft
+
+      for (int j = jj; j != (jj + tile_size); ++j) {
+        particles.vx[i] += dt * Fx[j - jj];
+        particles.vy[i] += dt * Fy[j - jj];
+        particles.vz[i] += dt * Fz[j - jj];
+      }
     }
-
-    // Berechne �nderung der Geschwindigkeit des Partikel i durch einwirkende
-    // Kraft
-    particles.vx[i] += dt * Fx;
-    particles.vy[i] += dt * Fy;
-    particles.vz[i] += dt * Fz;
   }
 
   // Bewege Partikel entsprechend der aktuellen Geschwindigkeit
