@@ -28,5 +28,3 @@ void MoveParticles(const int nr_Particles, Particle *const partikel,
                    const float dt);
 void MoveParticlesOpt(const int nr_Particles, ParticleSoA particles,
                       const float dt);
-void MoveParticlesOptLoopBlock(const int nr_Particles, ParticleSoA particles,
-                               const float dt);
