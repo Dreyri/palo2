@@ -201,15 +201,15 @@ void MoveParticlesOptLoopBlock(const int nr_Particles, ParticleSoA particles,
         Fy[j - jj] += dy * invDrPower32;
         Fz[j - jj] += dz * invDrPower32;
       }
+    }
 
-      // Berechne �nderung der Geschwindigkeit des Partikel i durch einwirkende
-      // Kraft
+    // Berechne �nderung der Geschwindigkeit des Partikel i durch einwirkende
+    // Kraft
 
-      for (int j = jj; j != (jj + tile_size); ++j) {
-        particles.vx[i] += dt * Fx[j - jj];
-        particles.vy[i] += dt * Fy[j - jj];
-        particles.vz[i] += dt * Fz[j - jj];
-      }
+    for (int j = jj; j != (jj + tile_size); ++j) {
+      particles.vx[j] += dt * Fx[j - jj];
+      particles.vy[j] += dt * Fy[j - jj];
+      particles.vz[j] += dt * Fz[j - jj];
     }
   }
 
