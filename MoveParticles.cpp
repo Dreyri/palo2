@@ -95,7 +95,10 @@ void MoveParticlesOpt(const int nr_Particles, ParticleSoA particles,
     // Schleife �ber die anderen Partikel die Kraft auf Partikel i aus�ben
     // 5a) Erfordere eine Vektorisierung und gebe an das unser partikel 32 byte
     // aligned ist
-#pragma omp simd simdlen(8)
+    // 6a) Benutze parallel for um diese Schleife zu parallelisieren, gebe an
+    // das wir eine Reduktion ueber den Werten Fx, Fy, und Fz machen um
+    // Datenrennen zu vermeiden
+#pragma omp parallel for simd simdlen(8) reduction(+ : Fx, Fy, Fz) shared(particles)
     for (int j = 0; j < nr_Particles; j++) {
 
       // Abschw�chung als zus�tzlicher Abstand, um Singularit�t und
