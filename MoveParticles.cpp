@@ -86,7 +86,10 @@ void MoveParticlesOpt(const int nr_Particles, ParticleSoA particles,
   ASSUME_ALIGNED(particles.vy, 32);
   ASSUME_ALIGNED(particles.vz, 32);
 
-  // Schleife �ber alle Partikel
+// Schleife �ber alle Partikel
+// 6c) mit parallel for wird diese Schleife jetzt parallelisiert und wir geben
+// einen static schedule mit Blockgroesse 512 an.
+#pragma omp parallel for schedule(static, 512)
   for (int i = 0; i < nr_Particles; i++) {
 
     // Kraftkomponenten (x,y,z) der Kraft auf aktuellen Partikel (i)
@@ -98,7 +101,9 @@ void MoveParticlesOpt(const int nr_Particles, ParticleSoA particles,
     // 6a) Benutze parallel for um diese Schleife zu parallelisieren, gebe an
     // das wir eine Reduktion ueber den Werten Fx, Fy, und Fz machen um
     // Datenrennen zu vermeiden
-#pragma omp parallel for simd simdlen(8) reduction(+ : Fx, Fy, Fz) shared(particles)
+    // 6c) Nur noch die omp simd Anweisung da parallelisierung in der aeusseren
+    // Schleife gemacht wird
+#pragma omp simd simdlen(8)
     for (int j = 0; j < nr_Particles; j++) {
 
       // Abschw�chung als zus�tzlicher Abstand, um Singularit�t und
